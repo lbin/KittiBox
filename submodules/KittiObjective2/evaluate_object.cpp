@@ -20,7 +20,7 @@ STATIC EVALUATION PARAMETERS
 
 // holds the number of test images on the server
 const int32_t N_MAXIMAGES = 7518;
-const int32_t N_TESTIMAGES = 481;
+const int32_t N_TESTIMAGES = 179;
 
 // easy, moderate and hard evaluation level
 enum DIFFICULTY{EASY=0, MODERATE=1, HARD=2};
@@ -509,6 +509,11 @@ bool eval_class (FILE *fp_det, FILE *fp_ori, CLASSES current_class,const vector<
     vector<tGroundtruth> dc;
 
     // only evaluate objects of current class and ignore occluded, truncated objects
+    std::cout<<i<<endl;
+    std::cout<<"**********"<<endl;
+    std::cout<<groundtruth.size()<<endl;
+    std::cout<<"**********"<<endl;
+    std::cout<<detections.size()<<endl;
     cleanData(current_class, groundtruth[i], detections[i], i_gt, dc, i_det, n_gt, difficulty);
     ignored_gt.push_back(i_gt);
     ignored_det.push_back(i_det);
@@ -657,7 +662,7 @@ bool eval(string path, string path_to_gt, Mail* mail){
 
   // holds wether orientation similarity shall be computed (might be set to false while loading detections)
   // and which labels where provided by this submission
-  bool compute_aos=false, eval_car=true, eval_pedestrian=false, eval_cyclist=false;
+  bool compute_aos=false, eval_car=true, eval_pedestrian=true, eval_cyclist=true;
 
   // for all images read groundtruth and detections
   mail->msg("Loading detections...");

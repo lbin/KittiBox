@@ -59,8 +59,25 @@ def compute_rectangels(H, confidences, boxes, use_stitching=False, rnn_len=1, mi
                 abs_cy = int(bbox[1]) + cell_pix_size/2 + cell_pix_size * y
                 w = bbox[2]
                 h = bbox[3]
+                '''print ("The value of conf:")
+                print (confidences_r[0, y, x, n, 1:])
+                print ("************")'''
                 conf = np.max(confidences_r[0, y, x, n, 1:])
-                all_rects[y][x].append(Rect(abs_cx,abs_cy,w,h,conf))
+                '''print ("The value of max_conf:")
+                print (conf)
+                print ("************")'''
+                idx = np.argmax(confidences_r[0, y, x, n, 1:])
+                '''print ("The value of idx:")
+                print (idx)
+                print ("************")'''
+                class_id = -1
+                if idx == 0:
+                    class_id = 1
+                if idx == 1:
+                    class_id = 2
+                #if idx == 2:
+                    #class_id = 3
+                all_rects[y][x].append(Rect(abs_cx,abs_cy,w,h,class_id,conf))
 
     all_rects_r = [r for row in all_rects for cell in row for r in cell]
     if use_stitching:
@@ -95,8 +112,27 @@ def add_rectangles(H, orig_image, confidences, boxes, use_stitching=False, rnn_l
                 abs_cy = int(bbox[1]) + cell_pix_size/2 + cell_pix_size * y
                 w = bbox[2]
                 h = bbox[3]
+                print ("The shape of conf:")
+                print (confidences_r[0, y, x, n, :].shape)
+                print ("The value of conf:")
+                print (confidences_r[0, y, x, n, :])
+                print ("************")
                 conf = np.max(confidences_r[0, y, x, n, 1:])
-                all_rects[y][x].append(Rect(abs_cx,abs_cy,w,h,conf))
+                print ("The value of max_conf:")
+                print (conf)
+                print ("************")
+                idx = np.argmax(confidences_r[0, y, x, n, 1:])
+                print ("The value of idx:")
+                print (idx)
+                print ("************")
+                class_id = -1
+                if idx == 0:
+                    class_id = 1
+                if idx == 1:
+                    class_id = 2
+                #if idx == 2:
+                    #class_id = 3
+                all_rects[y][x].append(Rect(abs_cx,abs_cy,w,h,class_id,conf))
 
     all_rects_r = [r for row in all_rects for cell in row for r in cell]
     if use_stitching:
@@ -125,6 +161,7 @@ def add_rectangles(H, orig_image, confidences, boxes, use_stitching=False, rnn_l
         r.x2 = rect.cx + rect.width/2.
         r.y1 = rect.cy - rect.height/2.
         r.y2 = rect.cy + rect.height/2.
+        r.classID = rect.class_id
         r.score = rect.true_confidence
         rects.append(r)
 
