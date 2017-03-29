@@ -18,11 +18,11 @@
         "eval_iter": 2000,
         "write_iter": 800,
         "save_iter": 2000,
-        "image_iter": 10000
+        "image_iter": 150000
     },
     "arch": {
         "deep_feat": "fc7",
-        "layers": 101
+        "layers": 50
     },
     "path": ["../incl"],
     "solver": {
@@ -34,7 +34,6 @@
         "learning_rate_step": null, 
         "hungarian_iou": 0.35,
         "weights": "",
-        "batch_size": 5,
         "head_weights": [1.0, 0.1],
         "max_steps": 140000
     },
@@ -50,7 +49,7 @@
     "image_width": 1248, 
     "grid_width": 39,
     "grid_height": 12,
-    "batch_size": 5, 
+    "batch_size": 5,
     "tau": 0.35,
     "scale_down": 0.1,
     "focus_size": 1.8,
