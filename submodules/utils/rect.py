@@ -1,9 +1,10 @@
 class Rect(object):
-    def __init__(self, cx, cy, width, height, confidence):
+    def __init__(self, cx, cy, width, height, class_id, confidence):
         self.cx = cx
         self.cy = cy
         self.width = width
         self.height = height
+        self.class_id = class_id
         self.confidence = confidence
         self.true_confidence = confidence
     def overlaps(self, other):

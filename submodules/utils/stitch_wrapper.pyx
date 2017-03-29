@@ -3,11 +3,12 @@ from libcpp.set cimport set
 from rect import Rect as PyRect
 cdef extern from "stitch_rects.hpp":
     cdef cppclass Rect:
-        Rect(int cx, int cy, int width, int height, float confidence)
+        Rect(int cx, int cy, int width, int height, int class_id, float confidence)
         int cx_
         int cy_
         int width_
         int height_
+        int class_id_
         float confidence_
         float true_confidence_
 
@@ -44,6 +45,7 @@ def stitch_rects(all_rects, tau=0.25):
                         py_rect.cy,
                         py_rect.width,
                         py_rect.height,
+                        py_rect.class_id,
                         py_rect.confidence)
                     )
 
@@ -80,6 +82,7 @@ def stitch_rects(all_rects, tau=0.25):
             acc_rects[i].cy_,
             acc_rects[i].width_,
             acc_rects[i].height_,
+            acc_rects[i].class_id_,
             acc_rects[i].confidence_)
         acc_rect.true_confidence = acc_rects[i].true_confidence_
         py_acc_rects.append(acc_rect)

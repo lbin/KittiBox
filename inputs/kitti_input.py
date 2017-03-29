@@ -41,16 +41,25 @@ def read_kitti_anno(label_file, detect_truck):
     labels = [line.rstrip().split(' ') for line in open(label_file)]
     rect_list = []
     for label in labels:
-        if not (label[0] == 'Car' or label[0] == 'Van' or
+        if not (label[0] == 'Car' or label[0] == 'Pedestrian' or
                 label[0] == 'Truck' or label[0] == 'DontCare'):
             continue
         notruck = not detect_truck
         if notruck and label[0] == 'Truck':
             continue
+        class_id = -100
         if label[0] == 'DontCare':
             class_id = -1
-        else:
+        if label[0] == 'Car':
             class_id = 1
+        if label[0] == 'Pedestrian':
+            class_id = 2
+        #if label[0] == 'Cyclist':
+            #class_id = 3
+        print("***123456***");
+        print(label[0]);
+        print(class_id);
+        print("***123456***");
         object_rect = AnnoLib.AnnoRect(
             x1=float(label[4]), y1=float(label[5]),
             x2=float(label[6]), y2=float(label[7]))
@@ -58,7 +67,30 @@ def read_kitti_anno(label_file, detect_truck):
         assert object_rect.y1 < object_rect.y2
         object_rect.classID = class_id
         rect_list.append(object_rect)
-
+        '''w=float(label[6])-float(label[4])
+        h=float(label[7])-float(label[5])
+        if class_id == 2:
+            for x_scale_factor in ([-0.25,0,0.25]):
+                #print("**********")
+                #print(x_scale_factor)
+                x_offset=w*x_scale_factor
+                x_1=float(label[4])+x_offset
+                x_1=max(0,x_1)
+                x_2=float(label[6])+x_offset
+                x_2=min(x_2,1280)
+                for y_scale_factor in ([-0.25,0,0.25]):
+                    print("*********")
+                    print("({},{})".format(x_scale_factor,y_scale_factor))
+                    y_offset=h*y_scale_factor
+                    y_1=float(label[5])+y_offset
+                    y_1=max(0,y_1)
+                    y_2=float(label[7])+y_offset
+                    y_2=min(y_2,1280)
+                    object_rect_aug=AnnoLib.AnnoRect(x1=x_1,x2=x_2,y1=y_1,y2=y_2)
+                    assert object_rect.x1 < object_rect.x2
+                    assert object_rect.y1 < object_rect.y2
+                    object_rect.classID = class_id
+                    rect_list.append(object_rect)'''
     return rect_list
 
 
@@ -150,7 +182,7 @@ def _load_kitti_txt(kitti_txt, hypes, jitter=False, random_shuffel=True):
                     jitter_scale_max=jitter_scale_max,
                     jitter_offset=jitter_offset)
 
-            pos_list = [rect for rect in anno.rects if rect.classID == 1]
+            pos_list = [rect for rect in anno.rects if rect.classID != -1]
             pos_anno = fake_anno(pos_list)
 
             boxes, confs = annotation_to_h5(hypes,

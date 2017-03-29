@@ -46,7 +46,15 @@ def make_img_dir(hypes):
 def write_rects(rects, filename):
     with open(filename, 'w') as f:
         for rect in rects:
-            string = "Car 0 1 0 %f %f %f %f 0 0 0 0 0 0 0 %f" % \
+            string = ' '
+            if rect.classID == 1:
+                string = "Car 0 1 0 %f %f %f %f 0 0 0 0 0 0 0 %f" % \
+                (rect.x1, rect.y1, rect.x2, rect.y2, rect.score)
+            if rect.classID == 2:
+                string = "Pedestrian 0 1 0 %f %f %f %f 0 0 0 0 0 0 0 %f" % \
+                (rect.x1, rect.y1, rect.x2, rect.y2, rect.score)
+            if rect.classID == 3:
+                string = "Cyclist 0 1 0 %f %f %f %f 0 0 0 0 0 0 0 %f" % \
                 (rect.x1, rect.y1, rect.x2, rect.y2, rect.score)
             print(string, file=f)
 

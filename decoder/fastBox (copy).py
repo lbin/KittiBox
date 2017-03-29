@@ -278,7 +278,12 @@ def _compute_rezoom_loss(hypes, rezoom_loss_input):
     perm_truth, pred_boxes, classes, pred_mask, \
         pred_confs_deltas, pred_boxes_deltas, mask_r = rezoom_loss_input
     if hypes['rezoom_change_loss'] == 'center':
-        inside=tf.reshape(tf.to_int64(classes), [-1])
+        error = (perm_truth[:, :, 0:2] - pred_boxes[:, :, 0:2]) \
+            / tf.maximum(perm_truth[:, :, 2:4], 1.)
+        square_error = tf.reduce_sum(tf.square(error), 2)
+        inside = tf.reshape(tf.to_int64(
+            tf.logical_and(tf.less(square_error, 0.2**2),
+                           tf.greater(classes, 0))), [-1])
     elif hypes['rezoom_change_loss'] == 'iou':
         pred_boxes_flat = tf.reshape(pred_boxes, [-1, 4])
         perm_truth_flat = tf.reshape(perm_truth, [-1, 4])
@@ -337,9 +342,8 @@ def loss(hypes, decoded_logits, labels):
 
     # Compute confidence loss
     confidences = tf.reshape(confidences, (outer_size, 1))
-    #true_classes = tf.reshape(tf.cast(tf.greater(confidences, 0), 'int64'),
-                              #[outer_size])
-    true_classes = tf.reshape(tf.cast(confidences, 'int64'), [outer_size])
+    true_classes = tf.reshape(tf.cast(tf.greater(confidences, 0), 'int64'),
+                              [outer_size])
     
     print("*** The true classes is: ***")
     print(true_classes)
